@@ -16,7 +16,6 @@ _TESTS = [
     "src/**/__tests__/**/*.ts*",
 ]
 
-# So we copy everything it wants to read to the output "bin" directory
 copy_to_bin(
     name = "static_files",
     srcs = glob(
@@ -27,7 +26,7 @@ copy_to_bin(
         exclude = _TESTS,
     ) + [
         "package.json",
-        # "tsconfig.json",
+        "tsconfig.json",
     ],
 )
 
@@ -91,8 +90,8 @@ bin.react_scripts_binary(
         "start",
     ],
     data = _RUNTIME_DEPS + [
-        "@npm//@types/react",
-        "@npm//@types/react-dom",
+        #"@npm//@types/react",
+        #"@npm//@types/react-dom",
     ],
     tags = [
         # This tag instructs ibazel to pipe into stdin a event describing actions.
