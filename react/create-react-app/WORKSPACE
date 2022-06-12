@@ -2,9 +2,9 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "aspect_rules_js",
-    sha256 = "f01010e1f6bd49a8da6f7350c60992b7eb2eb62058cfe7aa6abd9e416bc2158b",
-    strip_prefix = "rules_js-0.9.1",
-    url = "https://github.com/aspect-build/rules_js/archive/refs/tags/v0.9.1.tar.gz",
+    sha256 = "6b218d2ab2e365807d1d403580b2c865a771e7fda9449171b2abd9765d0299b3",
+    strip_prefix = "rules_js-0.12.1",
+    url = "https://github.com/aspect-build/rules_js/archive/refs/tags/v0.12.1.tar.gz",
 )
 
 load("@aspect_rules_js//js:repositories.bzl", "rules_js_dependencies")
@@ -18,9 +18,9 @@ nodejs_register_toolchains(
     node_version = DEFAULT_NODE_VERSION,
 )
 
-load("@aspect_rules_js//js:npm_import.bzl", "translate_pnpm_lock")
+load("@aspect_rules_js//npm:npm_import.bzl", "npm_translate_lock")
 
-translate_pnpm_lock(
+npm_translate_lock(
     name = "npm",
     pnpm_lock = "//:pnpm-lock.yaml",
 )

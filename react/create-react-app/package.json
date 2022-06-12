@@ -13,7 +13,8 @@
   },
   "devDependencies": {
     "@bazel/ibazel": "^0.16.2",
-    "@bazel/runfiles": "^5.5.0"
+    "@bazel/runfiles": "^5.5.0",
+    "typescript": "4.7.3"
   },
   "scripts": {
     "start": "ibazel run //:start",
