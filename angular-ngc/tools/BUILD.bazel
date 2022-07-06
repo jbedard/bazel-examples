@@ -30,3 +30,10 @@ ts_project(
         "//:node_modules/@types/node",
     ],
 )
+
+exports_files(
+    [
+        "karma.conf.js",
+    ],
+    visibility = ["//visibility:public"],
+)

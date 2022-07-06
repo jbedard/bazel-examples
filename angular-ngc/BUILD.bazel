@@ -18,10 +18,3 @@ ts_config(
     visibility = ["//visibility:public"],
     deps = ["tsconfig.base.json"],
 )
-
-exports_files(
-    [
-        "karma.conf.js",
-    ],
-    visibility = ["//visibility:public"],
-)
