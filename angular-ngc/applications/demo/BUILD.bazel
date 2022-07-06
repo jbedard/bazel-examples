@@ -5,5 +5,6 @@ package(default_visibility = ["//visibility:public"])
 # The Angular demo application
 ng_application(
     name = "demo",
-    deps = ["//:lib/lib-a"],
+    deps = ["//:lib/lib-a", "//:lib/common"],
+    test_deps = ["//:lib/lib-a", "//:lib/common"],
 )
