@@ -6,8 +6,8 @@ ng_library(
     name = "lib-a",
     package_name = "@ngc-example/lib-a",
     deps = [
-      "//:lib/common",
-      "//libraries/lib-a/src/lib/strings",
+        "//libraries/common",
+        "//libraries/lib-a/src/lib/strings",
     ],
-    test_deps = ["//:lib/common"],
+    test_deps = ["//libraries/common"],
 )

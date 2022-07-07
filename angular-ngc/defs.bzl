@@ -1,5 +1,5 @@
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
-load("@aspect_rules_js//npm:defs.bzl", "npm_package")
+load("@aspect_rules_js//js:defs.bzl", "js_library")
 load("@aspect_rules_ts//ts:defs.bzl", _ts_project = "ts_project")
 load("@aspect_rules_esbuild//esbuild:defs.bzl", "esbuild")
 
@@ -128,40 +128,25 @@ def ng_library(name, package_name, deps = [], test_deps = [], visibility = ["//v
         exclude = test_spec_srcs,
     )
 
+    # An index file to allow direct imports of the directory similar to a package.json "main"
+    write_file(
+        name = "_index",
+        out = "index.ts",
+        content = ["export * from \"./src/public-api\";"],
+        visibility = ["//visibility:private"],
+    )
+
     ng_project(
         name = "_lib",
-        srcs = srcs,
+        srcs = srcs + [":_index"],
         deps = deps + LIBRARY_DEPS,
         visibility = ["//visibility:private"],
     )
 
-    # A package.json pointing to the public_api.js as the package entry point
-    # TODO: TBD: could also write an index.js file, or drop the public_api.ts convention for index.ts
-    write_file(
-        name = "_package_json",
-        out = "package.json",
-        content = ["""{"name": "%s", "main": "./public-api.js", "types": "./public-api.d.ts"}""" % package_name],
-        visibility = ["//visibility:private"],
-    )
-
-    # Output the library as an npm package that can be linked.
-    npm_package(
-        name = "_pkg",
-        package = package_name,
-        root_paths = [
-            native.package_name(),
-            "%s/src" % native.package_name(),
-        ],
-        srcs = [":_lib", ":_package_json"],
-        visibility = ["//visibility:private"],
-    )
-
-    # The primary public library target. Aliased to allow "_pkg" as the npm_package()
-    # name and therefore also output directory.
-    native.alias(
+    js_library(
         name = name,
-        actual = "_pkg",
-        visibility = visibility,
+        deps = [":_lib"],
+        visibility = ["//visibility:public"],
     )
 
     if len(test_spec_srcs) > 0:
