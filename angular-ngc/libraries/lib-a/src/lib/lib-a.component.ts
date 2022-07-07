@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 
+import {TITLE} from "./strings";
+
 @Component({
   selector: 'example-library',
   template: `
     <strong>
-      The library component! With <lib-common></lib-common>
+      The ${TITLE} library component! With <lib-common></lib-common>
     </strong>
   `,
   styleUrls: ['./lib-a.component.css']
