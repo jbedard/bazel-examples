@@ -69,13 +69,25 @@ def ng_application(name, deps = [], test_deps = [], **kwargs):
     """
     Bazel macro for compiling an NG application project. Creates {name}, test, serve targets.
 
+    Projects structure:
+      main.ts
+      index.html
+      polyfills.ts (optional)
+      styles.css (optional)
+      app/
+        **/*.{ts,css,html}
+
+    Tests:
+      app/
+        **/*.spec.ts
+
     Args:
       name: the rule name
       deps: dependencies of the library
       test_deps: additional dependencies for tests
       **kwargs: extra args passed to main Angular CLI rules
     """
-    test_spec_srcs = native.glob(["src/**/*.spec.ts"])
+    test_spec_srcs = native.glob(["app/**/*.spec.ts"])
 
     srcs = native.glob(
         ["app/**/*"],
@@ -93,12 +105,12 @@ def ng_library(name, package_name, deps = [], test_deps = [], visibility = ["//v
     Bazel macro for compiling an NG library project. Creates {name} and test targets.
 
     Projects structure:
-      src:
+      src/
         public_api.ts
         **/*.{ts,css,html}
 
     Tests:
-      src:
+      src/
         **/*.spec.ts
 
     Args:
