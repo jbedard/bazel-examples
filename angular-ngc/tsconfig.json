@@ -27,7 +27,9 @@
     }
   },
   "angularCompilerOptions": {
+    "compilationMode": "full",
     "enableI18nLegacyMessageIdFormat": false,
+    "enableResourceInlining": true,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
