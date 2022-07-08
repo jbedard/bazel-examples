@@ -151,7 +151,6 @@ def ng_application(name, deps = [], test_deps = [], assets = None, html_assets =
     #     visibility = visibility,
     # )
 
-
 def _pkg_web(name, entry_point, entry_deps = [], html_assets = [], assets = [], define = {}, production = False):
     """ Bundle and create runnable web package.
 
@@ -187,18 +186,22 @@ def _pkg_web(name, entry_point, entry_deps = [], html_assets = [], assets = [], 
         name = html_out,
         outs = ["%s/index.html" % html_out],
         args = [
-          # Template HTML file.
-          "--html", "$(location :index.html)",
-          # Output HTML file.
-          "--out", "%s/%s/index.html" % (native.package_name(), html_out),
-          # Root directory prefixes to strip from asset paths.
-          "--roots", native.package_name(), "%s/%s" % (native.package_name(), html_out)
-        ]
-        # Generic Assets
-        + ["--assets"] + ["$(execpath %s)" % s for s in html_assets]
-        # TODO: zonejs at the top
-        # Main bundle
-        + ["--scripts", "--module", "%s/main.js" % bundle],
+                   # Template HTML file.
+                   "--html",
+                   "$(location :index.html)",
+                   # Output HTML file.
+                   "--out",
+                   "%s/%s/index.html" % (native.package_name(), html_out),
+                   # Root directory prefixes to strip from asset paths.
+                   "--roots",
+                   native.package_name(),
+                   "%s/%s" % (native.package_name(), html_out),
+               ] +
+               # Generic Assets
+               ["--assets"] + ["$(execpath %s)" % s for s in html_assets] +
+               # TODO: zonejs at the top
+               # Main bundle
+               ["--scripts", "--module", "%s/main.js" % bundle],
         # The input HTML template, all assets for potential access for stamping
         srcs = [":index.html", ":%s" % bundle] + html_assets,
         visibility = ["//visibility:private"],
@@ -211,7 +214,6 @@ def _pkg_web(name, entry_point, entry_deps = [], html_assets = [], assets = [], 
         root_paths = [".", "%s/%s" % (native.package_name(), html_out)],
         visibility = ["//visibility:private"],
     )
-
 
 def ng_library(name, package_name = None, deps = [], test_deps = [], visibility = ["//visibility:public"]):
     """
