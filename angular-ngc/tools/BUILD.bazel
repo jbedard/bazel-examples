@@ -21,12 +21,12 @@ js_binary(
 ts_project(
     name = "ngc.esbuild",
     srcs = ["ngc.esbuild.ts"],
+    tsconfig = "//:tsconfig.node",
+    visibility = ["//visibility:public"],
     deps = [
-        "//:node_modules/@types/babel__core",
-        "//:node_modules/@types/node",
         "//:node_modules/@angular/compiler-cli",
         "//:node_modules/@babel/core",
+        "//:node_modules/@types/babel__core",
+        "//:node_modules/@types/node",
     ],
-    visibility = ["//visibility:public"],
-    tsconfig = "//:tsconfig.node",
 )

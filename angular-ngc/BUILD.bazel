@@ -8,15 +8,15 @@ npm_link_all_packages(name = "node_modules")
 ts_config(
     name = "tsconfig",
     src = "tsconfig.json",
-    deps = ["tsconfig.base.json"],
     visibility = ["//visibility:public"],
+    deps = ["tsconfig.base.json"],
 )
 
 ts_config(
     name = "tsconfig.node",
     src = "tsconfig.node.json",
-    deps = ["tsconfig.base.json"],
     visibility = ["//visibility:public"],
+    deps = ["tsconfig.base.json"],
 )
 
 exports_files(
