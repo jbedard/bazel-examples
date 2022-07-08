@@ -1,13 +1,6 @@
 {
-  "name": "angular",
+  "name": "angular-ngc",
   "version": "0.0.0",
-  "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
-  },
   "private": true,
   "dependencies": {
     "@angular/animations": "^14.0.4",
