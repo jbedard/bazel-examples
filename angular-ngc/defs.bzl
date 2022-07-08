@@ -125,6 +125,7 @@ def ng_application(name, deps = [], test_deps = [], assets = None, html_assets =
         entry_deps = [":_app"],
         html_assets = html_assets,
         assets = assets,
+        define = {},
         production = True,
         visibility = ["//visibility:private"],
     )
@@ -135,6 +136,7 @@ def ng_application(name, deps = [], test_deps = [], assets = None, html_assets =
         entry_deps = [":_app"],
         html_assets = html_assets,
         assets = assets,
+        define = {},
         production = False,
         visibility = ["//visibility:private"],
     )
