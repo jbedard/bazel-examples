@@ -90,7 +90,7 @@ def ng_application(name, deps = [], test_deps = [], **kwargs):
     test_spec_srcs = native.glob(["app/**/*.spec.ts"])
 
     srcs = native.glob(
-        ["app/**/*"],
+        ["main.ts", "app/**/*"],
         exclude = test_spec_srcs,
     )
 
@@ -98,7 +98,19 @@ def ng_application(name, deps = [], test_deps = [], **kwargs):
         name = "_app",
         srcs = srcs,
         deps = deps + APPLICATION_DEPS,
+        visibility = ["//visibility:private"],
     )
+
+    # Bundle the app
+    esbuild(
+        name = "_bundle",
+        entry_points = ["main.js"],
+        srcs = [":_app"],
+        output_dir = True,
+        splitting = True,
+        visibility = ["//visibility:private"],
+    )
+
 
 def ng_library(name, package_name, deps = [], test_deps = [], visibility = ["//visibility:public"]):
     """
