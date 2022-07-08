@@ -126,7 +126,7 @@ def ng_application(name, deps = [], test_deps = [], assets = None, html_assets =
         html_assets = html_assets,
         assets = assets,
         production = True,
-        visibility = visibility,
+        visibility = ["//visibility:private"],
     )
 
     _pkg_web(
@@ -136,7 +136,7 @@ def ng_application(name, deps = [], test_deps = [], assets = None, html_assets =
         html_assets = html_assets,
         assets = assets,
         production = False,
-        visibility = visibility,
+        visibility = ["//visibility:private"],
     )
 
     # devserser
@@ -147,12 +147,12 @@ def ng_application(name, deps = [], test_deps = [], assets = None, html_assets =
         visibility = visibility,
     )
 
-    # # The default target: the prod package
-    # native.alias(
-    #     name = name,
-    #     actual = "_prod_pkg",
-    #     visibility = visibility,
-    # )
+    # The default target: the prod package
+    native.alias(
+        name = name,
+        actual = "prod",
+        visibility = visibility,
+    )
 
 def _pkg_web(name, entry_point, entry_deps, html_assets, assets, define, production, visibility):
     """ Bundle and create runnable web package.
@@ -272,9 +272,10 @@ def ng_library(name, package_name = None, deps = [], test_deps = [], visibility 
             name = "test",
             tests = test_spec_srcs,
             deps = [":_lib"] + test_deps + TEST_DEPS,
+            visibility = visibility,
         )
 
-def _unit_tests(name, tests, deps):
+def _unit_tests(name, tests, deps, visibility):
     ng_project(
         name = "_tests",
         srcs = tests,
