@@ -43,6 +43,16 @@ TEST_DEPS = APPLICATION_DEPS + [
     "//:node_modules/jasmine-core",
 ]
 
+NG_DEV_DEFINE = {
+  "process.env.NODE_ENV": "'development'",
+  "ngJitMode": "false",
+}
+NG_PROD_DEFINE = {
+  "process.env.NODE_ENV": "'production'",
+  "ngDevMode": "false",
+  "ngJitMode": "false",
+}
+
 def ts_project(name, **kwargs):
     _ts_project(
         name = name,
@@ -104,6 +114,7 @@ def ng_application(name, deps = [], test_deps = [], assets = None, html_assets =
         exclude = test_spec_srcs,
     )
 
+    # Primary app source
     ng_project(
         name = "_app",
         srcs = srcs,
@@ -111,6 +122,7 @@ def ng_application(name, deps = [], test_deps = [], assets = None, html_assets =
         visibility = ["//visibility:private"],
     )
 
+    # App unit tests
     if len(test_spec_srcs) > 0:
         _unit_tests(
             name = "test",
@@ -119,13 +131,29 @@ def ng_application(name, deps = [], test_deps = [], assets = None, html_assets =
             visibility = visibility,
         )
 
+    # App polyfills source + bundle.
+    ng_project(
+        name = "_polyfills",
+        srcs = ["polyfills.ts"],
+        deps = ["//:node_modules/zone.js"],
+        visibility = ["//visibility:private"],
+    )
+    esbuild(
+        name = "polyfills-bundle",
+        entry_point = "polyfills.js",
+        srcs = [":_polyfills"],
+        define = {"process.env.NODE_ENV": "'production'"},
+        format = "esm",
+        minify = True,
+        visibility = ["//visibility:private"],
+    )
+
     _pkg_web(
         name = "prod",
         entry_point = "main.js",
         entry_deps = [":_app"],
         html_assets = html_assets,
         assets = assets,
-        define = {},
         production = True,
         visibility = ["//visibility:private"],
     )
@@ -136,17 +164,8 @@ def ng_application(name, deps = [], test_deps = [], assets = None, html_assets =
         entry_deps = [":_app"],
         html_assets = html_assets,
         assets = assets,
-        define = {},
         production = False,
         visibility = ["//visibility:private"],
-    )
-
-    # devserser
-    history_server_bin.history_server_binary(
-        name = "devserver",
-        args = ["$(location :dev)"],
-        data = [":dev"],
-        visibility = visibility,
     )
 
     # The default target: the prod package
@@ -156,7 +175,7 @@ def ng_application(name, deps = [], test_deps = [], assets = None, html_assets =
         visibility = visibility,
     )
 
-def _pkg_web(name, entry_point, entry_deps, html_assets, assets, define, production, visibility):
+def _pkg_web(name, entry_point, entry_deps, html_assets, assets, production, visibility):
     """ Bundle and create runnable web package.
 
       For a given application entry_point, assets and defined constants... generate
@@ -164,24 +183,18 @@ def _pkg_web(name, entry_point, entry_deps, html_assets, assets, define, product
       providated assets, package all content into a resulting directory of the given name.
     """
 
-    # Adjust based/append on production flag
-    define_combined = {
-        "process.env.NODE_ENV": "production" if production else "development",
-        "ngDevMode": "false" if production else "true",
-    }
-    define_combined.update(define.items())
-
     bundle = "bundle-%s" % name
 
     esbuild(
         name = bundle,
         entry_points = [entry_point],
         srcs = entry_deps,
-        define = define_combined,
+        config = "//tools:ngc.esbuild.js",
+        define = NG_PROD_DEFINE if production else NG_DEV_DEFINE,
         format = "esm",
         output_dir = True,
         splitting = True,
-        minify = True,
+        minify = production,
         visibility = ["//visibility:private"],
     )
 
@@ -204,19 +217,27 @@ def _pkg_web(name, entry_point, entry_deps, html_assets, assets, define, product
                ] +
                # Generic Assets
                ["--assets"] + ["$(execpath %s)" % s for s in html_assets] +
-               # TODO: zonejs at the top
-               # Main bundle
+               ["--scripts", "--module", "polyfills-bundle.js"] +
+               # Main bundle to bootstrap the app last
                ["--scripts", "--module", "%s/main.js" % bundle],
         # The input HTML template, all assets for potential access for stamping
-        srcs = [":index.html", ":%s" % bundle] + html_assets,
+        srcs = [":index.html", ":%s" % bundle, ":polyfills-bundle"] + html_assets,
         visibility = ["//visibility:private"],
     )
 
     copy_to_directory(
         name = name,
-        srcs = [":%s" % bundle, ":%s" % html_out] + html_assets + assets,
+        srcs = [":%s" % bundle, ":polyfills-bundle", ":%s" % html_out] + html_assets + assets,
         exclude_prefixes = ["%s_metadata.json" % bundle], #TODO: delete after https://github.com/aspect-build/rules_esbuild/commit/f3def5493814845ad1f7863dde5ba21c12f424b8
         root_paths = [".", "%s/%s" % (native.package_name(), html_out)],
+        visibility = visibility,
+    )
+
+    # http server serving teh bundle
+    history_server_bin.history_server_binary(
+        name = "%sserver" % name,
+        args = ["$(location :%s)" % name],
+        data = [":%s" % name],
         visibility = visibility,
     )
 

@@ -7,7 +7,15 @@ npm_link_all_packages(name = "node_modules")
 # The root repo tsconfig
 ts_config(
     name = "tsconfig",
-    src = ":tsconfig.json",
+    src = "tsconfig.json",
+    deps = ["tsconfig.base.json"],
+    visibility = ["//visibility:public"],
+)
+
+ts_config(
+    name = "tsconfig.node",
+    src = "tsconfig.node.json",
+    deps = ["tsconfig.base.json"],
     visibility = ["//visibility:public"],
 )
 
