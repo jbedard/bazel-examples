@@ -62,7 +62,7 @@ def ng_project(name, **kwargs):
         name = name,
 
         # Compiler
-        tsc = "//:ngc",
+        tsc = "//tools:ngc",
         supports_workers = False,
 
         # Any other ts_project() or generic args
