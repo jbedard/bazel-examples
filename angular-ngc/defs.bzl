@@ -1,10 +1,10 @@
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@aspect_rules_js//js:defs.bzl", "js_library")
 load("@aspect_bazel_lib//lib:copy_to_directory.bzl", "copy_to_directory")
-load("@aspect_rules_ts//ts:defs.bzl", _ts_project = "ts_project")
 load("@aspect_rules_esbuild//esbuild:defs.bzl", "esbuild")
 load("@npm//:history-server/package_json.bzl", history_server_bin = "bin")
 load("@npm//:html-insert-assets/package_json.bzl", html_insert_assets_bin = "bin")
+load("//tools:ng.bzl", "ng_esbuild", "ng_project")
 
 # Common dependencies of Angular applications
 APPLICATION_DEPS = [
@@ -52,32 +52,6 @@ NG_PROD_DEFINE = {
     "ngDevMode": "false",
     "ngJitMode": "false",
 }
-
-def ts_project(name, **kwargs):
-    _ts_project(
-        name = name,
-
-        # Default tsconfig and aligning attributes
-        tsconfig = kwargs.pop("tsconfig", "//:tsconfig"),
-        declaration = kwargs.pop("declaration", True),
-        declaration_map = kwargs.pop("declaration_map", True),
-        source_map = kwargs.pop("source_map", True),
-        **kwargs
-    )
-
-def ng_project(name, **kwargs):
-    """The rules_js ts_project() configured with the Angular ngc compiler.
-    """
-    ts_project(
-        name = name,
-
-        # Compiler
-        tsc = "//tools:ngc",
-        supports_workers = False,
-
-        # Any other ts_project() or generic args
-        **kwargs
-    )
 
 def ng_application(name, deps = [], test_deps = [], assets = None, html_assets = None, visibility = ["//visibility:public"], **kwargs):
     """
@@ -185,11 +159,10 @@ def _pkg_web(name, entry_point, entry_deps, html_assets, assets, production, vis
 
     bundle = "bundle-%s" % name
 
-    esbuild(
+    ng_esbuild(
         name = bundle,
         entry_points = [entry_point],
         srcs = entry_deps,
-        config = "//tools:ngc.esbuild.js",
         define = NG_PROD_DEFINE if production else NG_DEV_DEFINE,
         format = "esm",
         output_dir = True,

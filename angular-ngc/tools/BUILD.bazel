@@ -1,6 +1,6 @@
 load("@aspect_bazel_lib//lib:directory_path.bzl", "directory_path")
 load("@aspect_rules_js//js:defs.bzl", "js_binary")
-load("//:defs.bzl", "ts_project")
+load(":ts.bzl", "ts_project")
 
 # The Angular ngc compiler
 directory_path(
