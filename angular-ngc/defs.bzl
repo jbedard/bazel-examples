@@ -117,6 +117,9 @@ def ng_application(name, deps = [], test_deps = [], assets = None, html_assets =
         entry_point = "polyfills.js",
         srcs = [":_polyfills"],
         define = {"process.env.NODE_ENV": "'production'"},
+        config = {
+          "resolveExtensions": [".mjs", ".js"],
+        },
         format = "esm",
         minify = True,
         visibility = ["//visibility:private"],
