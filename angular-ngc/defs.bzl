@@ -247,7 +247,7 @@ def ng_library(name, package_name = None, deps = [], test_deps = [], visibility 
 
     Projects structure:
       src/
-        public_api.ts
+        public-api.ts
         **/*.{ts,css,html}
 
     Tests:
