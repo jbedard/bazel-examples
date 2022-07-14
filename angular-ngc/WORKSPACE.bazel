@@ -63,9 +63,9 @@ esbuild_register_toolchains(
 
 http_archive(
     name = "aspect_rules_ts",
-    sha256 = "7c89fccf94fd1452505e53376ab87a212162d0b4ef2512e1fe3fb5c5ff89c0b1",
-    strip_prefix = "rules_ts-bb86a508de08ea9478aa74e39eec9ffce2f4dee2",
-    url = "https://github.com/aspect-build/rules_ts/archive/bb86a508de08ea9478aa74e39eec9ffce2f4dee2.tar.gz",
+    sha256 = "a5f9a56dd21d637f099bc22481cb62dd7e279b21c3e741d467a39d43578ef054",
+    strip_prefix = "rules_ts-5a90192ce3b3d5ca0c7124cf986c998eb4a88776",
+    url = "https://github.com/aspect-build/rules_ts/archive/5a90192ce3b3d5ca0c7124cf986c998eb4a88776.tar.gz",
 )
 
 load("@aspect_rules_ts//ts:repositories.bzl", "rules_ts_dependencies", LATEST_TS_VERSION = "LATEST_VERSION")
