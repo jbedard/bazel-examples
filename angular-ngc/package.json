@@ -2,7 +2,6 @@
   "name": "angular-ngc",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "dependencies": {
     "@angular/animations": "^14.0.4",
     "@angular/common": "^14.0.4",
