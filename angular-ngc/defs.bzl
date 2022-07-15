@@ -5,8 +5,14 @@ load("@aspect_rules_esbuild//esbuild:defs.bzl", "esbuild")
 load("@npm//:history-server/package_json.bzl", history_server_bin = "bin")
 load("@npm//:html-insert-assets/package_json.bzl", html_insert_assets_bin = "bin")
 load("//tools:ng.bzl", "ng_esbuild", "ng_project")
+load("@npm//:karma/package_json.bzl", _karma_bin = "bin")
+load("//tools:karma.bzl", "generate_karma_config", "generate_test_bootstrap", "generate_test_setup")
 
 # Common dependencies of Angular applications
+POLYFILLS_DEPS = [
+    "//:node_modules/zone.js",
+]
+
 APPLICATION_DEPS = [
     "//:node_modules/@angular/common",
     "//:node_modules/@angular/core",
@@ -14,8 +20,8 @@ APPLICATION_DEPS = [
     "//:node_modules/@angular/platform-browser",
     "//:node_modules/rxjs",
     "//:node_modules/tslib",
-    "//:node_modules/zone.js",
-]
+] + POLYFILLS_DEPS
+
 APPLICATION_HTML_ASSETS = ["styles.css", "favicon.ico"]
 
 # Common dependencies of Angular libraries
@@ -27,20 +33,20 @@ LIBRARY_DEPS = [
     "//:node_modules/tslib",
 ]
 
-# Common dependencies of Angular test suites using jasmine
-TEST_CONFIG = [
-    "//:karma.conf.js",
+TEST_DEPS = APPLICATION_DEPS + [
+    "//:node_modules/@angular/compiler",
     "//:node_modules/@types/jasmine",
+    "//:node_modules/jasmine-core",
+    "//:node_modules/@angular/platform-browser-dynamic",
+]
+
+# Common dependencies of Angular test suites using jasmine
+TEST_RUNNER_DEPS = [
     "//:node_modules/karma-chrome-launcher",
     "//:node_modules/karma",
     "//:node_modules/karma-jasmine",
     "//:node_modules/karma-jasmine-html-reporter",
     "//:node_modules/karma-coverage",
-]
-TEST_DEPS = APPLICATION_DEPS + [
-    "//:node_modules/@angular/compiler",
-    "//:node_modules/@types/jasmine",
-    "//:node_modules/jasmine-core",
 ]
 
 NG_DEV_DEFINE = {
@@ -101,6 +107,7 @@ def ng_application(name, deps = [], test_deps = [], assets = None, html_assets =
         _unit_tests(
             name = "test",
             tests = test_spec_srcs,
+            static_files = [],
             deps = [":_app"] + test_deps + TEST_DEPS,
             visibility = visibility,
         )
@@ -270,28 +277,68 @@ def ng_library(name, package_name = None, deps = [], test_deps = [], visibility 
         _unit_tests(
             name = "test",
             tests = test_spec_srcs,
+            static_files = [],
             deps = [":_lib"] + test_deps + TEST_DEPS,
             visibility = visibility,
         )
 
-def _unit_tests(name, tests, deps, visibility):
+def _unit_tests(name, tests, static_files, deps, visibility):
+    generate_test_setup(name = "test_setup")
+    test_srcs = ["test_setup.ts"] + tests
+
     ng_project(
-        name = "_tests",
-        srcs = tests,
+        name = "_test",
+        srcs = test_srcs,
         deps = deps,
-        testonly = 1,
         visibility = ["//visibility:private"],
     )
 
-    # Bundle the spec files
+    # TODO: move the bootstrap rules to tools so it only need to be generated once.
+    # But it will be located in different directory. We may need to use copy to directory to make it work.
+    generate_test_bootstrap(
+        name = "_test_bootstrap",
+    )
+
     esbuild(
-        name = "_test_bundle",
+        name = "_test_bootstrap_bundle",
         testonly = 1,
-        entry_points = [spec.replace(".ts", ".js") for spec in tests],
-        deps = [":_tests"],
+        entry_points = [":_test_bootstrap"],
+        deps = [":_test_bootstrap"],
         output_dir = True,
         splitting = True,
         visibility = ["//visibility:private"],
     )
 
-    # TODO: create '{name}' target to actually run/test the tests
+    # Bundle the spec files
+    ng_esbuild(
+        name = "_test_bundle",
+        testonly = 1,
+        entry_points = [file.replace(".ts", ".js") for file in test_srcs],
+        deps = [":_test"],
+        output_dir = True,
+        splitting = True,
+        visibility = ["//visibility:private"],
+    )
+
+    karma_config_name = "_karma_conf"
+
+    generate_karma_config(
+        name = karma_config_name,
+        # TODO:
+        test_bundles = [":_test_bundle"],
+        bootstrap_bundles = [":_test_bootstrap_bundle"],
+        # TODO: add static_files, such as json data file consumed by a service of Angular.
+        static_files = static_files,
+        testonly = 1,
+    )
+
+    _karma_bin.karma_test(
+        name = name,
+        testonly = 1,
+        data = [":%s" % karma_config_name, ":_test_bundle", ":_test_bootstrap_bundle"] + TEST_RUNNER_DEPS,
+        args = [
+            "start",
+            "$(rootpath %s)" % karma_config_name,
+        ],
+        visibility = visibility,
+    )
