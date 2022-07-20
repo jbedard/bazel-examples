@@ -1,5 +1,6 @@
 load(":util.bzl", "to_manifest_path")
-load("@bazel_skylib//rules:write_file.bzl", "write_file")
+load("@aspect_bazel_lib//lib:copy_to_directory.bzl", "copy_to_directory")
+load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 
 # Generate a karma.config.js file to:
 # - run the given bundle containing specs
@@ -55,29 +56,18 @@ generate_karma_config = rule(
 )
 
 def generate_test_bootstrap(name):
-    write_file(
+    copy_to_directory(
         name = name,
-        out = "%s.js" % name,
+        srcs = ["//tools:prebuild_test_bootstrap"],
         testonly = 1,
-        content = ["import 'zone.js';", "import 'zone.js/testing';"],
+        exclude_prefixes = ["prebuild_test_bootstrap_metadata.json"],  #TODO: delete after https://github.com/aspect-build/rules_esbuild/commit/f3def5493814845ad1f7863dde5ba21c12f424b8
+        root_paths = ["tools/prebuild_test_bootstrap"],
     )
 
 def generate_test_setup(name):
-    write_file(
+    copy_file(
         name = name,
         out = "%s.ts" % name,
         testonly = 1,
-        content = [
-            "import { getTestBed } from '@angular/core/testing';",
-            "import {",
-            "  BrowserDynamicTestingModule,",
-            "  platformBrowserDynamicTesting,",
-            "} from '@angular/platform-browser-dynamic/testing';",
-            "",
-            "// First, initialize the Angular testing environment.",
-            "getTestBed().initTestEnvironment(",
-            "  BrowserDynamicTestingModule,",
-            "  platformBrowserDynamicTesting()",
-            ");",
-        ],
+        src = "//tools:test-setup.ts",
     )

@@ -299,16 +299,6 @@ def _unit_tests(name, tests, static_files, deps, visibility):
         name = "_test_bootstrap",
     )
 
-    esbuild(
-        name = "_test_bootstrap_bundle",
-        testonly = 1,
-        entry_points = [":_test_bootstrap"],
-        deps = [":_test_bootstrap"],
-        output_dir = True,
-        splitting = True,
-        visibility = ["//visibility:private"],
-    )
-
     # Bundle the spec files
     ng_esbuild(
         name = "_test_bundle",
@@ -326,7 +316,7 @@ def _unit_tests(name, tests, static_files, deps, visibility):
         name = karma_config_name,
         # TODO:
         test_bundles = [":_test_bundle"],
-        bootstrap_bundles = [":_test_bootstrap_bundle"],
+        bootstrap_bundles = [":_test_bootstrap"],
         # TODO: add static_files, such as json data file consumed by a service of Angular.
         static_files = static_files,
         testonly = 1,
@@ -335,7 +325,7 @@ def _unit_tests(name, tests, static_files, deps, visibility):
     _karma_bin.karma_test(
         name = name,
         testonly = 1,
-        data = [":%s" % karma_config_name, ":_test_bundle", ":_test_bootstrap_bundle"] + TEST_RUNNER_DEPS,
+        data = [":%s" % karma_config_name, ":_test_bundle", ":_test_bootstrap"] + TEST_RUNNER_DEPS,
         args = [
             "start",
             "$(rootpath %s)" % karma_config_name,
