@@ -58,10 +58,10 @@ generate_karma_config = rule(
 def generate_test_bootstrap(name):
     copy_to_directory(
         name = name,
-        srcs = ["//tools:prebuild_test_bootstrap"],
+        srcs = ["//tools:test_bootstrap"],
         testonly = 1,
-        exclude_prefixes = ["prebuild_test_bootstrap_metadata.json"],  #TODO: delete after https://github.com/aspect-build/rules_esbuild/commit/f3def5493814845ad1f7863dde5ba21c12f424b8
-        root_paths = ["tools/prebuild_test_bootstrap"],
+        exclude_prefixes = ["test_bootstrap_metadata.json"],  #TODO: delete after https://github.com/aspect-build/rules_esbuild/commit/f3def5493814845ad1f7863dde5ba21c12f424b8
+        root_paths = ["tools/test_bootstrap"],
     )
 
 def generate_test_setup(name):

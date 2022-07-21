@@ -41,11 +41,9 @@ exports_files(
 )
 
 esbuild(
-    name = "prebuild_test_bootstrap",
+    name = "test_bootstrap",
     testonly = 1,
     entry_points = ["//tools:test-bootstrap.js"],
-    output_dir = True,
-    splitting = True,
     visibility = ["//visibility:public"],
     deps = [
         "//:node_modules/zone.js",
