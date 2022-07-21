@@ -1,5 +1,6 @@
 load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
 load("@npm//:defs.bzl", "npm_link_all_packages")
+load("//tools:prettier.bzl", "prettier")
 
 # Link npm packages
 npm_link_all_packages(name = "node_modules")
@@ -17,4 +18,16 @@ ts_config(
     src = "tsconfig.node.json",
     visibility = ["//visibility:public"],
     deps = ["tsconfig.base.json"],
+)
+
+prettier(
+    name = "prettier",
+    srcs = glob([
+        "applications/**/*.ts",
+        "applications/**/*.scss",
+        "applications/**/*.html",
+        "libraries/**/*.ts",
+        "libraries/**/*.scss",
+        "libraries/**/*.html",
+    ]),
 )

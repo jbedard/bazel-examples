@@ -22,6 +22,7 @@ specifiers:
   karma-coverage: ~2.2.0
   karma-jasmine: ~5.0.1
   karma-jasmine-html-reporter: ~1.7.0
+  prettier: ^2.7.1
   rxjs: ~7.5.5
   tslib: ^2.4.0
   typescript: ~4.7.4
@@ -54,6 +55,7 @@ devDependencies:
   karma-coverage: 2.2.0
   karma-jasmine: 5.0.1_karma@6.3.20
   karma-jasmine-html-reporter: 1.7.0_vkuxrcz7dkokejy2pe2kfqtj5q
+  prettier: 2.7.1
   typescript: 4.7.4
 
 packages:
@@ -123,7 +125,6 @@ packages:
     dependencies:
       '@angular/core': 14.0.4_rxjs@7.5.5+zone.js@0.11.6
       tslib: 2.4.0
-    dev: true
 
   /@angular/core/14.0.4_rxjs@7.5.5+zone.js@0.11.6:
     resolution: {integrity: sha512-uMS/X+/5RokF3uiiD1IAr6Ha9k7QPegHrAB3QW0x6WRUTMq0K+08F+AeF5COmbfYMMaxofD6x8XmM+BLeg/0hw==}
@@ -1479,6 +1480,12 @@ packages:
   /picomatch/2.3.1:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
     engines: {node: '>=8.6'}
+    dev: true
+
+  /prettier/2.7.1:
+    resolution: {integrity: sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
     dev: true
 
   /proxy-addr/2.0.7:

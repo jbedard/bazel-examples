@@ -34,6 +34,7 @@ ts_project(
 exports_files(
     [
         "karma.conf.js",
+        ".prettierrc.json",
     ],
     visibility = ["//visibility:public"],
 )
