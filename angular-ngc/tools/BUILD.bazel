@@ -43,7 +43,7 @@ exports_files(
 esbuild(
     name = "test_bootstrap",
     testonly = 1,
-    entry_point = "//tools:test-bootstrap.js",
+    entry_point = ":test-bootstrap.js",
     metafile = False,
     sourcemap = "inline",
     visibility = ["//visibility:public"],
