@@ -293,8 +293,6 @@ def _unit_tests(name, tests, static_files, deps, visibility):
         visibility = ["//visibility:private"],
     )
 
-    # TODO: move the bootstrap rules to tools so it only need to be generated once.
-    # But it will be located in different directory. We may need to use copy to directory to make it work.
     generate_test_bootstrap(
         name = "_test_bootstrap",
     )

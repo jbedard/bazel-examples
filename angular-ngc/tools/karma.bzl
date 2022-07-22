@@ -1,5 +1,4 @@
 load(":util.bzl", "to_manifest_path")
-load("@aspect_bazel_lib//lib:copy_to_directory.bzl", "copy_to_directory")
 load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 
 # Generate a karma.config.js file to:
@@ -56,12 +55,11 @@ generate_karma_config = rule(
 )
 
 def generate_test_bootstrap(name):
-    copy_to_directory(
+    copy_file(
         name = name,
-        srcs = ["//tools:test_bootstrap"],
+        src = "//tools:test_bootstrap",
+        out = "test_bootstrap.js",
         testonly = 1,
-        exclude_prefixes = ["test_bootstrap_metadata.json"],  #TODO: delete after https://github.com/aspect-build/rules_esbuild/commit/f3def5493814845ad1f7863dde5ba21c12f424b8
-        root_paths = ["tools/test_bootstrap"],
     )
 
 def generate_test_setup(name):
