@@ -18,5 +18,6 @@ Furthermore we didn't teach Vite the ["ibazel_notify_changes protocol"](https://
 However, Vite is a lot faster than Webpack, so at a small scale like this, this developer roundtrip is actually fine.
 
 To scale up the example, there are a couple of things you could do:
-- to be more Bazel-idiomatic, the Vite composition of tools like `esbuild` and  plugins like `@vitejs/plugin-vue` could be decomposed into an analogous Bazel pipeline.
+
+- to be more Bazel-idiomatic, the Vite composition of tools like `esbuild` and plugins like `@vitejs/plugin-vue` could be decomposed into an analogous Bazel pipeline.
 - extract vue components as pre-built npm packages, using our pnpm workspaces support to link these into an app. This makes the build more incremental since those packages ("component libraries") would not be re-built every time.

@@ -8,7 +8,7 @@ Read our blog post: <https://blog.aspect.dev/typescript-speedup>
 
 The example is in the `BUILD` file, where we have three builds:
 
-1. As a reference, we first use `ts_project` without the `transpiler` attribute, so `tsc` does both type-checking and transpilation to JS. 
+1. As a reference, we first use `ts_project` without the `transpiler` attribute, so `tsc` does both type-checking and transpilation to JS.
 
 ```
 % bazel build tsc
@@ -33,8 +33,8 @@ $ bazel build swc_typecheck
 ```
 
 3. Runs babel to transpile ts -> js and tsc to type-check.
-This is slower than SWC, but might be needed if you currently
-rely on babel plugins that aren't available in SWC yet.
+   This is slower than SWC, but might be needed if you currently
+   rely on babel plugins that aren't available in SWC yet.
 
 ```
 % bazel build babel

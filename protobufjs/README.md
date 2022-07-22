@@ -1,7 +1,6 @@
-# Example of protobuf.js + @grpc/grpc-js + rules_ts + rules_js 
+# Example of protobuf.js + @grpc/grpc-js + rules_ts + rules_js
 
 A simple example for `protobuf.js` + `@grpc/grpc-js` implementing a dummy weather forecast service.
-
 
 ### Running the example
 
@@ -43,4 +42,3 @@ Forecast
 Temperature 27°C LOW / 32°C HIGH
 Wind direction is North at 10 km/h
 ```
-
