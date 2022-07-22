@@ -23,9 +23,6 @@ const TEST_BUNDLE_DIRS = [
 
 const BUNDLE_FILES = [];
 TEST_BUNDLE_DIRS.forEach((dir) => {
-  if (dir.indexOf("metadata.json") !== -1) {
-    return;
-  }
   findAllFiles(__dirname + "/" + dir, BUNDLE_FILES);
 });
 

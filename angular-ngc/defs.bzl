@@ -127,6 +127,7 @@ def ng_application(name, deps = [], test_deps = [], assets = None, html_assets =
         config = {
             "resolveExtensions": [".mjs", ".js"],
         },
+        metafile = False,
         format = "esm",
         minify = True,
         visibility = ["//visibility:private"],
@@ -177,6 +178,7 @@ def _pkg_web(name, entry_point, entry_deps, html_assets, assets, production, vis
         format = "esm",
         output_dir = True,
         splitting = True,
+        metafile = False,
         minify = production,
         visibility = ["//visibility:private"],
     )
@@ -211,7 +213,6 @@ def _pkg_web(name, entry_point, entry_deps, html_assets, assets, production, vis
     copy_to_directory(
         name = name,
         srcs = [":%s" % bundle, ":polyfills-bundle", ":%s" % html_out] + html_assets + assets,
-        exclude_prefixes = ["%s_metadata.json" % bundle],  #TODO: delete after https://github.com/aspect-build/rules_esbuild/commit/f3def5493814845ad1f7863dde5ba21c12f424b8
         root_paths = [".", "%s/%s" % (native.package_name(), html_out)],
         visibility = visibility,
     )
@@ -303,6 +304,7 @@ def _unit_tests(name, tests, static_files, deps, visibility):
         testonly = 1,
         entry_points = [file.replace(".ts", ".js") for file in test_srcs],
         deps = [":_test"],
+        metafile = False,
         output_dir = True,
         splitting = True,
         visibility = ["//visibility:private"],
